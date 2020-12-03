@@ -2,10 +2,9 @@ import React, {useState, useEffect} from 'react';
 import {db} from '../firebase';
 
 
-const LinkForm = (props) => {
+const RegisterForm = (props) => {
 
   
-
 
     let initialStateValues = {
         name: '',
@@ -38,8 +37,8 @@ const LinkForm = (props) => {
         console.log(values);
     }
 
-    const getLinkById = async (id) => {
-      const doc = await db.collection('links').doc(id).get();
+    const getListById = async (id) => {
+      const doc = await db.collection('list').doc(id).get();
         setValues({...doc.data()});
     }
 
@@ -47,7 +46,7 @@ const LinkForm = (props) => {
         if(props.currentId === '') {
             setValues({...initialStateValues});
         }else{
-            getLinkById(props.currentId);
+            getListById(props.currentId);
         }
 
         
@@ -139,4 +138,4 @@ const LinkForm = (props) => {
     )
 }
 
-export default LinkForm;
+export default RegisterForm;

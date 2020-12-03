@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import LinkForm from './LinkForm';
+import RegisterForm from './RegisterForm';
 import { toast } from 'react-toastify';
 import {db} from '../firebase';
 
-const Links = () => {
+const Register = () => {
 
-    const [links, setLinks] = useState([]);
+    const [list, setLists] = useState([]);
     const [currentId, setCurrentId] = useState('');
 
     const addOrEditLink = async (linkObject) => {
      
         try {
             if(currentId == ''){
-                await db.collection('links').doc().set(linkObject);
+                await db.collection('list').doc().set(linkObject);
                  toast('Nuevo registro agregado',{
                 type: 'success'
                 });
            }else{
-               await db.collection('links').doc(currentId).update(linkObject);
+               await db.collection('list').doc(currentId).update(linkObject);
                toast('Registro actualizado exitosamente',{
                 type: 'info'
                 });
@@ -31,7 +31,7 @@ const Links = () => {
 
     const onDeleteLink = async (id) => {
        if(window.confirm('Estas seguro que quieres eliminar?')){
-          await db.collection('links').doc(id).delete();
+          await db.collection('list').doc(id).delete();
           toast('Registro eliminado exitosamente',{
             type: 'error',
             autoClose: 2000
@@ -39,41 +39,41 @@ const Links = () => {
        }
     }
 
-    const getLinks = () => {
-      db.collection('links').onSnapshot((querySnapshot) =>{
+    const getList = () => {
+      db.collection('list').onSnapshot((querySnapshot) =>{
           const docs = [];
         querySnapshot.forEach(doc => {
             docs.push({...doc.data(), id: doc.id});
         });
-        setLinks(docs);
+        setLists(docs);
     });
     }
 
     useEffect(() => {
-        getLinks();
+        getList();
     }, []);
 
     return <div className="col-md-12">
     <div className="row">
         <div className="col-md-4">
-            <LinkForm {...{addOrEditLink, currentId, links}}/>
+            <RegisterForm {...{addOrEditLink, currentId, list}}/>
         </div>
         <div className="col-md-8">
-            {links.map(link => (
-                <div className="card mb-1" key={link.id}>
+            {list.map(data => (
+                <div className="card mb-1" key={data.id}>
                     <div className="card-body">
                         <div className="text-right">
-                        <button className="btn btn-info" onClick={() => setCurrentId(link.id)}><i className="fas fa-edit"></i></button>
-                        <button className="btn btn-danger" onClick={() => onDeleteLink(link.id)}><i className="fas fa-trash"></i></button>
+                        <button className="btn btn-info" onClick={() => setCurrentId(data.id)}><i className="fas fa-edit"></i></button>
+                        <button className="btn btn-danger" onClick={() => onDeleteLink(data.id)}><i className="fas fa-trash"></i></button>
                         </div>
-                        <h4>{link.name}</h4>
-                        <p>{link.description}</p>
+                        <h4>{data.name}</h4>
+                        <p>{data.description}</p>
                         <div className="form-check">
-                        <input disabled checked={link.check} className="form-check-input" type="checkbox" name="check" />
+                        <input disabled checked={data.check} className="form-check-input" type="checkbox" name="check" />
                          <label className="form-check-label"> Actividad realizada</label>
                         </div>
                         <ul>
-                        {link.cats.map(function (value, index) {
+                        {data.cats.map(function (value, index) {
                             return <li key={index}>{value}</li>
                         })
                         }
@@ -87,4 +87,4 @@ const Links = () => {
     </div>
 }
 
-export default Links;
+export default Register;
